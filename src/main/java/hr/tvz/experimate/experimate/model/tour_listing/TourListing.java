@@ -43,6 +43,10 @@ public class TourListing {
         return host;
     }
 
+    public LocalDateTime getMeetingDate() {
+        return meetingDate;
+    }
+
     public boolean isReserved() {
         return reserved;
     }

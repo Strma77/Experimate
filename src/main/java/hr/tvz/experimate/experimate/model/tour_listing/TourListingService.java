@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +31,9 @@ public class TourListingService {
         User host = userRepo
                 .findById(dto.hostId())
                 .orElseThrow(() -> new UserNotFoundException(dto.hostId()));
+
+        if (!hostAvailableAtDate(host, dto.meetingDate().toLocalDate()))
+            throw new HostAlreadyTakenException(dto.hostId());
 
         TourListing saved = listingRepo.save(
                 new TourListing(
@@ -68,13 +74,18 @@ public class TourListingService {
     }
 
     public void deleteListing(Integer id) {
-        TourListing listing = listingRepo
-                .findById(id)
+        listingRepo.findById(id)
                 .orElseThrow(() -> {
-                   log.warn("Could not find TourListing with id {}", id);
-                   return new TourListingNotFoundException(id);
+                    log.warn("Could not find TourListing with id {} to delete.", id);
+                    return new TourListingNotFoundException(id);
                 });
         listingRepo.deleteById(id);
         log.info("Deleted TourListing with id {}", id);
+    }
+
+    private boolean hostAvailableAtDate(User host, LocalDate meetingDate) {
+        LocalDateTime start = meetingDate.atStartOfDay();
+        LocalDateTime end = meetingDate.atTime(23, 59, 59);
+        return !listingRepo.existsByHostAndMeetingDateBetween(host, start, end);
     }
 }

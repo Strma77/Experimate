@@ -53,7 +53,7 @@ POST http://localhost:8080/api/tour-listing
 Content-type: application/json
 
 {
-  "hostId": 1,
+  "hostId": 2,
   "city": "Zagreb",
   "meetingDate": "2026-03-20T10:00:00",
   "tourDescription": "{{tour}}"
@@ -89,8 +89,8 @@ POST http://localhost:8080/api/reservation
 Content-type: application/json
 
 {
-  "guestId": 2,
-  "tourListingId": 1
+  "guestId": 3,
+  "tourListingId": 3
 }
 
 ### Delete reservation
